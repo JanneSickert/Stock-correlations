@@ -53,4 +53,9 @@ public class Pictures implements FindURL{
 	public Website getWebsite() {
 		return web;
 	}
+
+	@Override
+	public void writeDataToStorage() {
+		writeFile("metadata/pictureLinks.txt", picturURLs);
+	}
 }

@@ -1,6 +1,8 @@
 package parser;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +17,8 @@ public interface FindURL {
 	public void printAllURLs();
 	
 	public Website getWebsite();
+	
+	public void writeDataToStorage();
 	
 	@WasTested
 	@Comment(ret = "the HTML code line by line")
@@ -125,5 +129,28 @@ public interface FindURL {
 			c_content[i] = content.charAt(i);
 		}
 		return (findStartIndex(c_text, c_content));
+	}
+	
+	default public void writeFile(String path, ArrayList<String> text) {
+		File ff = new File(path);
+		if (!(ff.exists())) {
+			try {
+				ff.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try {
+			FileWriter fwf = new FileWriter(ff, false);
+			for (int i = 0; i < text.size(); i++) {
+				fwf.write(text.get(i));
+				fwf.write("\n");
+			}
+			fwf.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 	}
 }

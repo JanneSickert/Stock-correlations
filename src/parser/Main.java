@@ -12,7 +12,8 @@ public class Main {
 			System.out.println("\n" + "\n");
 			Pictures pic = new Pictures(list);
 			pic.parseWebsite();
-			pic.printAllURLs();
+			// fu[0].writeDataToStorage();
+			// pic.writeDataToStorage();
 	}
 
 	private static void startParsing() {

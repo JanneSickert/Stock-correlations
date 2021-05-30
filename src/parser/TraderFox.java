@@ -31,4 +31,13 @@ public class TraderFox implements FindURL{
 	public Website getWebsite() {
 		return web;
 	}
+
+	@Override
+	public void writeDataToStorage() {
+		ArrayList<String> list = new ArrayList<String>();
+		for (int i = 0; i < web.getSize(); i++) {
+			list.add(web.getURL(i));
+		}
+		writeFile("metadata/Stocks.txt", list);
+	}
 }

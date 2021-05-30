@@ -27,4 +27,8 @@ public class Test implements FindURL{
 	public static void main(String[] args) {
 		new Test();
 	}
+
+	@Override
+	public void writeDataToStorage() {
+	}
 }
