@@ -41,6 +41,7 @@ public class Stock {
 		 FileOutputStream fos = new FileOutputStream(getStoragePath());
 		 fos.write(response);
 		 fos.close();
+		 System.out.println("Download: " + name + " from " + picURL);
 	}
 	
 	private String getStoragePath() {

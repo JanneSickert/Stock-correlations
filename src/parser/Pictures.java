@@ -14,7 +14,6 @@ public class Pictures implements FindURL{
 	private Website web = null;
 	private final String KEY_STRING = "<img src=\"/charts/finance-chart.php";
 	private ArrayList<String> urls, picturURLs, names;
-	private ArrayList<Stock> stock;
 	
 	Pictures(ArrayList<String> urls) {
 		this.urls = urls;
@@ -23,7 +22,6 @@ public class Pictures implements FindURL{
 	public void parseWebsite() {
 		picturURLs = new ArrayList<String>();
 		names = new ArrayList<String>();
-		stock = new ArrayList<Stock>();
 		for (int i = 0; i < urls.size(); i++) {
 			ArrayList<String> code = download(urls.get(i));
 			if (code != null) {
@@ -40,14 +38,14 @@ public class Pictures implements FindURL{
 			}
 		}
 		for (int k = 0; k < names.size(); k++) {
-			stock.add(new Stock(picturURLs.get(k), names.get(k)));
+			Stock stock = new Stock(picturURLs.get(k), names.get(k));
 			try {
-				stock.get(k).downloadImage();
+				stock.downloadImage();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("ERROR: Cannot download image");
 			}
-			stock.get(k).loadData();
+			stock.loadData();
 		}
 	}
 	
