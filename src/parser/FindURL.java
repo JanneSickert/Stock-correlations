@@ -28,24 +28,25 @@ public interface FindURL {
 		InputStream is = null;
 		BufferedReader br;
 		String line;
-
 		try {
 			url = new URL(strURL);
-			is = url.openStream(); // throws an IOException
+			is = url.openStream();
 			br = new BufferedReader(new InputStreamReader(is));
-
 			while ((line = br.readLine()) != null) {
 				list.add(line);
 			}
 		} catch (MalformedURLException mue) {
+			list = null;
 			mue.printStackTrace();
 		} catch (IOException ioe) {
+			list = null;
 			ioe.printStackTrace();
 		} finally {
 			try {
 				if (is != null)
 					is.close();
 			} catch (IOException ioe) {
+				list = null;
 				ioe.printStackTrace();
 			}
 		}
@@ -131,6 +132,7 @@ public interface FindURL {
 		return (findStartIndex(c_text, c_content));
 	}
 	
+	@WasTested
 	default public void writeFile(String path, ArrayList<String> text) {
 		File ff = new File(path);
 		if (!(ff.exists())) {

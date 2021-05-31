@@ -1,41 +1,63 @@
 package parser;
 
-public class Test extends Pictures{
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import analysis.Stock;
 
-	public void parseWebsite() {
-	}
-	
-	public void printAllURLs() {
-	}
-	
-	public Website getWebsite() {
-		return null;
-	}
-	
-	private void test_findStartIndex() {
-		final String
-		TEXT = "eins zwei drei vier",
-		FIND = "drei";
-		int in = findStartIndex(TEXT, FIND);
-		System.out.println(TEXT.substring(in));
-	}
-	
-	Test() {
-		super(null);
-		test_findStartIndex();
-		test_deleteAMP();
-	}
-	
-	private void test_deleteAMP() {
-		final String testURL = "https://traderfox.de/charts/finance-chart.php?width=935&amp;height=328&amp;stock_id=386713&amp;time_range=360&amp;time_unit=d&amp;chart_type=CandleStick&amp;volume=1&amp;show_extremes=1&amp;class=stock";
-		System.out.println(deleteAMP(testURL));
-	}
-	
+public class Test {
+
 	public static void main(String[] args) {
-		new Test();
+		new Test_Pictures();
+		new Test_Stock();
 	}
-
-	@Override
-	public void writeDataToStorage() {
+	
+	public static class Test_Pictures extends Pictures{
+		private void test_deleteAMP() {
+				String testURL = null, ref = null;
+		        Method[] methoden = Pictures.class.getDeclaredMethods();
+		        for (Method m : methoden) {
+		            Comment c = m.getAnnotation(Comment.class);
+		            if (c != null) {
+		                if (c.includeTest()) {
+		                	testURL = c.exampleInput()[0];
+		                	ref = c.exampleOutput();
+		                }
+		            }
+		        }
+			if (deleteAMP(testURL).equals(ref)) {
+				System.out.println("test_deleteAMP() complete");
+			} else {
+				System.out.println("ERROR: test_deleteAMP() return a false value");
+				System.out.println("method: " + deleteAMP(testURL));
+				System.out.println("testVa: " + ref);
+			}
+		}
+		Test_Pictures() {
+			super(null);
+			test_deleteAMP();
+		}
+	}
+	
+	public static class Test_Stock {
+		Test_Stock() {
+	        @SuppressWarnings("rawtypes")
+			Constructor[] konstruktoren = Stock.class.getDeclaredConstructors();
+	        for (@SuppressWarnings("rawtypes") Constructor k : konstruktoren) {
+				@SuppressWarnings("unchecked")
+				Comment ab = (Comment) k.getAnnotation(Comment.class);
+	            if (ab != null) {
+	                if (ab.includeTest()) {
+	                	Stock stock = new Stock(ab.exampleInput()[0], ab.exampleInput()[1]);
+	                	try {
+							stock.downloadImage();
+							System.out.println("test_downloadImage() complete");
+						} catch (IOException e) {
+							System.out.println("ERROR: Cannot download image");
+						}
+	                }
+	            }
+	        }
+		}
 	}
 }

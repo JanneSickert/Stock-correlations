@@ -1,6 +1,8 @@
 package parser;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import analysis.Stock;
 
 /**
  * This class find the URL for the stock-chart
@@ -11,7 +13,8 @@ public class Pictures implements FindURL{
 	
 	private Website web = null;
 	private final String KEY_STRING = "<img src=\"/charts/finance-chart.php";
-	ArrayList<String> urls, picturURLs;
+	private ArrayList<String> urls, picturURLs, names;
+	private ArrayList<Stock> stock;
 	
 	Pictures(ArrayList<String> urls) {
 		this.urls = urls;
@@ -19,23 +22,48 @@ public class Pictures implements FindURL{
 	
 	public void parseWebsite() {
 		picturURLs = new ArrayList<String>();
+		names = new ArrayList<String>();
+		stock = new ArrayList<Stock>();
 		for (int i = 0; i < urls.size(); i++) {
 			ArrayList<String> code = download(urls.get(i));
-			System.out.println("Load picture at: " + urls.get(i));
-			for (String s : code) {
-				if (s.contains(KEY_STRING)) {
-					System.out.println("\n" + s + "\n");
-					String link = deleteAMP(getPictureLink(s));
-					System.out.println(link);
-					picturURLs.add(link);
+			if (code != null) {
+				System.out.println("Load picture at: " + urls.get(i));
+				for (String s : code) {
+					if (s.contains(KEY_STRING)) {
+						System.out.println("\n" + s + "\n");
+						String link = deleteAMP(getPictureLink(s));
+						System.out.println(link);
+						picturURLs.add(link);
+						names.add(makeName(urls.get(i)));
+					}
 				}
 			}
+		}
+		for (int k = 0; k < names.size(); k++) {
+			stock.add(new Stock(picturURLs.get(k), names.get(k)));
+			try {
+				stock.get(k).downloadImage();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("ERROR: Cannot download image");
+			}
+			stock.get(k).loadData();
 		}
 	}
 	
 	@Comment(
+			exampleInput = {"https://traderfox.de/aktien/144569-bb-biotech-ag"},
+			exampleOutput = "bb-biotech-ag"
+			)
+	private String makeName(String link) {
+		int index = getIndexFrom(link, '-');
+		return (link.substring(index + 1, link.length() - 1));
+	}
+	
+	@Comment(
+			includeTest = true,
 			exampleInput = {"https://traderfox.de/charts/finance-chart.php?width=935&amp;height=328&amp;stock_id=386713&amp;time_range=360&amp;time_unit=d&amp;chart_type=CandleStick&amp;volume=1&amp;show_extremes=1&amp;class=stock"},
-			exampleOutput = "https://traderfox.de/charts/finance-chart.php?width=935&height=328&stock_id=386713&time_range=360&time_unit=d&chart_type=CandleStick&volume=1&show_extremes=1&class=stock"
+			exampleOutput = "https://traderfox.de/charts/finance-chart.php?width=935&height=328&stock_id=386713&time_range=360&time_unit=d&chart_type=CandleStick&volume=1&"
 			)
 	protected String deleteAMP(String url) {
 		final char[] DEL = {'a', 'm', 'p', ';'};
