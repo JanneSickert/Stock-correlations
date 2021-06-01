@@ -11,19 +11,44 @@ import java.net.URL;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import parser.Comment;
+import parser.ExportData;
 
 public class Stock {
 
 	private String picURL;
 	private String name;
 	private ArrayList<Block> graph = new ArrayList<Block>();
+	private static ArrayList<String> textToFile = new ArrayList<String>();
 
+	public static void exportStockData() {
+		new ExportData() {
+			@Override
+			public void write() {
+				writeFile("metadata/StockValues.txt", textToFile);
+			}
+		}.write();
+	}
+	
 	class Block {
 		ArrayList<Candle> candle = new ArrayList<Candle>();
 	}
 
 	class Candle {
 		int lastPriceInPixel, maxValueInPixel, minValueInPixel, firstPriceInPixel;
+	}
+	
+	private void addGraphToExportData() {
+		textToFile.add(name);
+		for (int block = 0; block < graph.size(); block++) {
+			textToFile.add("Block index:" + block);
+			for (int candleIndex = 0; candleIndex < graph.get(block).candle.size(); candleIndex++) {
+				textToFile.add("Candle index:" + candleIndex);
+				textToFile.add("lastPriceInPixel:" + graph.get(block).candle.get(candleIndex).lastPriceInPixel);
+				textToFile.add("maxValueInPixel:" + graph.get(block).candle.get(candleIndex).maxValueInPixel);
+				textToFile.add("minValueInPixel:" + graph.get(block).candle.get(candleIndex).minValueInPixel);
+				textToFile.add("firstPriceInPixel:" + graph.get(block).candle.get(candleIndex).firstPriceInPixel);
+			}
+		}
 	}
 
 	@Comment(includeTest = true, exampleInput = {
@@ -143,5 +168,6 @@ public class Stock {
 				}
 			}
 		}
+		addGraphToExportData();
 	}
 }

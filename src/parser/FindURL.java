@@ -1,8 +1,6 @@
 package parser;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public interface FindURL {
+public interface FindURL extends ExportData{
 
 	public void parseWebsite();
 	
@@ -20,7 +18,6 @@ public interface FindURL {
 	
 	public void writeDataToStorage();
 	
-	@WasTested
 	@Comment(ret = "the HTML code line by line")
 	default public ArrayList<String> download(String strURL) {
 		ArrayList<String> list = new ArrayList<String>();
@@ -53,7 +50,6 @@ public interface FindURL {
 		return list;
 	}
 	
-	@WasTested
 	@Comment(
 			exampleInput = "https://traderfox.de/aktien/387372-zooplus-ag\" title=\"EI: ZOOPLUS AG\">ZOOPLUS AG</a></td>",
 			i_exampleOutput = 44)
@@ -96,7 +92,6 @@ public interface FindURL {
 		return (new String(arr));
 	}
 	
-	@WasTested
 	@Comment(ret = "The first index of the string to be found.")
 	default public int findStartIndex(@Comment(contain = "the HTML source code") char[] text, @Comment(contain = "The string to be found.") char[] content) {
 		int resultIndex = 0, checkSum = 0;
@@ -117,7 +112,6 @@ public interface FindURL {
 		return resultIndex;
 	}
 	
-	@WasTested
 	@Comment(ret = "The first index of the string to be found.")
 	default public int findStartIndex(@Comment(contain = "the HTML source code") String text, @Comment(contain = "The string to be found.") String content) {
 		char[] c_text = new char[text.length()];
@@ -130,29 +124,5 @@ public interface FindURL {
 			c_content[i] = content.charAt(i);
 		}
 		return (findStartIndex(c_text, c_content));
-	}
-	
-	@WasTested
-	default public void writeFile(String path, ArrayList<String> text) {
-		File ff = new File(path);
-		if (!(ff.exists())) {
-			try {
-				ff.createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		try {
-			FileWriter fwf = new FileWriter(ff, false);
-			for (int i = 0; i < text.size(); i++) {
-				fwf.write(text.get(i));
-				fwf.write("\n");
-			}
-			fwf.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
 	}
 }
