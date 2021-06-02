@@ -18,7 +18,7 @@ public class Stock {
 
 	private String picURL = null;
 	private String name = null;
-	private ArrayList<Block> graph = new ArrayList<Block>();
+	ArrayList<Block> graph = new ArrayList<Block>();
 	private static ArrayList<String> textToFile = new ArrayList<String>();
 
 	public static void exportStockData() {
@@ -38,16 +38,28 @@ public class Stock {
 		int lastPriceInPixel, maxValueInPixel, minValueInPixel, firstPriceInPixel;
 	}
 	
+	public String getMeta() {
+		int max = 0;
+		int sum = 0;
+		for (int i = 0; i < graph.size(); i++) {
+			sum = sum + graph.get(i).candle.size();
+			if (max < graph.get(i).candle.size()) {
+				max = graph.get(i).candle.size();
+			}
+		}
+		return ("{blocks:" + graph.size() + ",candles:" + max + ", SumCandles:" + sum + "}");
+	}
+	
 	private void addGraphToExportData() {
-		textToFile.add(name);
+		textToFile.add("#" + name);
 		for (int block = 0; block < graph.size(); block++) {
-			textToFile.add("Block index:" + block);
+			textToFile.add("$Block index:" + block);
 			for (int candleIndex = 0; candleIndex < graph.get(block).candle.size(); candleIndex++) {
-				textToFile.add("Candle index:" + candleIndex);
-				textToFile.add("lastPriceInPixel:" + graph.get(block).candle.get(candleIndex).lastPriceInPixel);
-				textToFile.add("maxValueInPixel:" + graph.get(block).candle.get(candleIndex).maxValueInPixel);
-				textToFile.add("minValueInPixel:" + graph.get(block).candle.get(candleIndex).minValueInPixel);
-				textToFile.add("firstPriceInPixel:" + graph.get(block).candle.get(candleIndex).firstPriceInPixel);
+				textToFile.add("=Candle index:" + candleIndex);
+				textToFile.add("-lastPriceInPixel:" + graph.get(block).candle.get(candleIndex).lastPriceInPixel);
+				textToFile.add("-maxValueInPixel:" + graph.get(block).candle.get(candleIndex).maxValueInPixel);
+				textToFile.add("-minValueInPixel:" + graph.get(block).candle.get(candleIndex).minValueInPixel);
+				textToFile.add("-firstPriceInPixel:" + graph.get(block).candle.get(candleIndex).firstPriceInPixel);
 			}
 		}
 	}
