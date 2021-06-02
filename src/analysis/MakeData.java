@@ -9,17 +9,19 @@ import parser.ExportData;
 
 public class MakeData {
 
-	private static Stock[] stock;
+	static Stock[] stock;
 	
 	public static void main(String[] args) {
 		ArrayList<String> names = readFile("metadata/StockNames.txt");
 		stock = new Stock[names.size()];
 		ArrayList<Stock> normalStock = new ArrayList<Stock>();
-		ArrayList<String> meta = new ArrayList<String>(), normalMeta = new ArrayList<String>();
+		ArrayList<String> meta = new ArrayList<String>(), normalMeta = new ArrayList<String>(), strEmtyLines = new ArrayList<String>();
+		ArrayList<ArrayList<Integer>> emptyLines = new ArrayList<ArrayList<Integer>>();
 		for (int i = 0; i < stock.length; i++) {
 			stock[i] = new Stock(names.get(i));
 			stock[i].loadData();
 			meta.add(stock[i].getMeta() + ",");
+			emptyLines.add(stock[i].emptyLinesInGraph);
 			if (stock[i].getMetaAsObject().isNormal()) {
 				normalStock.add(stock[i]);
 			}
@@ -43,6 +45,21 @@ public class MakeData {
 				writeFile("metadata/NormalSizeStockNames.txt", normalMeta);
 			}
 		}.write();
+		new ExportData() {
+			@Override
+			public void write() {
+				for (int i = 0; i < emptyLines.size(); i++) {
+					String s = "[";
+					for (int k = 0; k < emptyLines.get(i).size(); k++) {
+						s = s + emptyLines.get(i).get(k) + ",";
+					}
+					s = s + "]," + "\n";
+					strEmtyLines.add(s);
+				}
+				writeFile("metadata/Space.txt", strEmtyLines);
+			}
+		}.write();
+		Calculate.calculate();
 	}
 
 	private static ArrayList<String> readFile(String FileUrl) {

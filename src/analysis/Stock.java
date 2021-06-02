@@ -17,9 +17,10 @@ import parser.ExportData;
 public class Stock {
 
 	private String picURL = null;
-	private String name = null;
+	String name = null;
 	ArrayList<Block> graph = new ArrayList<Block>();
 	static ArrayList<String> textToFile = new ArrayList<String>();
+	ArrayList<Integer> emptyLinesInGraph = new ArrayList<Integer>();
 
 	public static void exportStockData(String fileName) {
 		new ExportData() {
@@ -181,6 +182,7 @@ public class Stock {
 			}
 			if (emptyLine) {
 				modi = 0;
+				emptyLinesInGraph.add((Integer) x);
 			} else {
 				if (modi == 4) {
 					modi = 1;
