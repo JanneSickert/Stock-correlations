@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +16,8 @@ import parser.ExportData;
 
 public class Stock {
 
-	private String picURL;
-	private String name;
+	private String picURL = null;
+	private String name = null;
 	private ArrayList<Block> graph = new ArrayList<Block>();
 	private static ArrayList<String> textToFile = new ArrayList<String>();
 
@@ -53,9 +54,15 @@ public class Stock {
 
 	@Comment(includeTest = true, exampleInput = {
 			"https://traderfox.de/charts/finance-chart.php?width=935&height=328&stock_id=386713&time_range=360&time_unit=d&chart_type=CandleStick&volume=1&",
-			"drillisch-ag-on" })
+			"drillisch-ag-on"},
+			make = "Constructor for the main method in parser.Main")
 	public Stock(String picURL, String name) {
 		this.picURL = picURL;
+		this.name = name;
+	}
+	
+	@Comment(make = "Constructor for MakeData.main(String[] args)")
+	Stock(String name) {
 		this.name = name;
 	}
 
@@ -98,9 +105,8 @@ public class Stock {
 		final int CANDLE_DOWN = new Color(204, 0, 0).getRGB();
 		final int WHITE_COLOR = new Color(255, 255, 255).getRGB();
 		BufferedImage img = null;
-		URL location = getClass().getClassLoader().getResource(getStoragePath());
 		try {
-			img = ImageIO.read(location);
+			img = ImageIO.read(new File(getStoragePath()));
 		} catch (Exception ex) {
 			System.out.println("ERROR: Cannot load image -> " + getStoragePath());
 		}
@@ -108,21 +114,22 @@ public class Stock {
 		for (int x = START_UP.x; x < END_UP.x; x++) {
 			boolean inCandle = false, up = false, down = false, emptyLine = true;
 			for (int y = START_UP.y; y < START_DOWN.y; y++) {
-				if (img.getRGB(x, y) == CANDLE_UP) {
+				int rgb = img.getRGB(x, y);
+				if (rgb == CANDLE_UP) {
 					if (!(inCandle)) {
 						inCandle = true;
 						lastPixel = y;
 						up = true;
 						emptyLine = false;
 					}
-				} else if (img.getRGB(x, y) == CANDLE_DOWN) {
+				} else if (rgb == CANDLE_DOWN) {
 					if (!(inCandle)) {
 						inCandle = true;
 						firstPixel = y;
 						down = true;
 						emptyLine = false;
 					}
-				} else if (img.getRGB(x, y) == WHITE_COLOR) {
+				} else if (rgb == WHITE_COLOR) {
 					if (inCandle) {
 						inCandle = false;
 						if (up) {
@@ -133,41 +140,42 @@ public class Stock {
 						}
 					}
 				}
-				if (emptyLine) {
-					modi = 0;
-				} else {
-					if (modi == 4) {
-						modi = 1;
-					}
+			}
+			if (emptyLine) {
+				modi = 0;
+			} else {
+				if (modi == 4) {
+					modi = 1;
 				}
-				switch (modi) {
-				case 0:
-					graph.add(new Block());
-					blockIndex++;
-					candleIndex = -1;
-				case 1:
-					graph.get(blockIndex).candle.add(new Candle());
-					candleIndex++;
-				case 2:
-					graph.get(blockIndex).candle.get(candleIndex).lastPriceInPixel = lastPixel;
-					graph.get(blockIndex).candle.get(candleIndex).firstPriceInPixel = firstPixel;
-					modi = 3;
-					break;
-				case 3:
-					if (up) {
-						graph.get(blockIndex).candle.get(candleIndex).maxValueInPixel = lastPixel;
-						graph.get(blockIndex).candle.get(candleIndex).minValueInPixel = firstPixel;
-					}
-					if (down) {
-						graph.get(blockIndex).candle.get(candleIndex).maxValueInPixel = firstPixel;
-						graph.get(blockIndex).candle.get(candleIndex).minValueInPixel = lastPixel;
-					}
-					modi = 4;
-					x++;
-					break;
+			}
+			switch (modi) {
+			case 0:
+				graph.add(new Block());
+				blockIndex++;
+				candleIndex = -1;
+			case 1:
+				graph.get(blockIndex).candle.add(new Candle());
+				candleIndex++;
+			case 2:
+				graph.get(blockIndex).candle.get(candleIndex).lastPriceInPixel = lastPixel;
+				graph.get(blockIndex).candle.get(candleIndex).firstPriceInPixel = firstPixel;
+				modi = 3;
+				break;
+			case 3:
+				if (up) {
+					graph.get(blockIndex).candle.get(candleIndex).maxValueInPixel = lastPixel;
+					graph.get(blockIndex).candle.get(candleIndex).minValueInPixel = firstPixel;
 				}
+				if (down) {
+					graph.get(blockIndex).candle.get(candleIndex).maxValueInPixel = firstPixel;
+					graph.get(blockIndex).candle.get(candleIndex).minValueInPixel = lastPixel;
+				}
+				modi = 4;
+				x++;
+				break;
 			}
 		}
 		addGraphToExportData();
+		System.out.println("Calculated data for " + name);
 	}
 }

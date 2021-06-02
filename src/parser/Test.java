@@ -55,6 +55,7 @@ public class Test {
 						} catch (IOException e) {
 							System.out.println("ERROR: Cannot download image");
 						}
+	                	stock.loadData();
 	                }
 	            }
 	        }

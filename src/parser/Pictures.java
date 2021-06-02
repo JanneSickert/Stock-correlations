@@ -45,7 +45,6 @@ public class Pictures implements FindURL{
 				e.printStackTrace();
 				System.out.println("ERROR: Cannot download image");
 			}
-			stock.loadData();
 		}
 	}
 	
@@ -55,7 +54,7 @@ public class Pictures implements FindURL{
 			)
 	private String makeName(String link) {
 		int index = getIndexFrom(link, '-');
-		return (link.substring(index + 1, link.length() - 1));
+		return (link.substring(index + 1, link.length()));
 	}
 	
 	@Comment(
@@ -121,5 +120,6 @@ public class Pictures implements FindURL{
 	@Override
 	public void writeDataToStorage() {
 		writeFile("metadata/pictureLinks.txt", picturURLs);
+		writeFile("metadata/StockNames.txt", names);
 	}
 }
