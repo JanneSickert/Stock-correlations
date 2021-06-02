@@ -14,17 +14,33 @@ public class MakeData {
 	public static void main(String[] args) {
 		ArrayList<String> names = readFile("metadata/StockNames.txt");
 		stock = new Stock[names.size()];
-		ArrayList<String> meta = new ArrayList<String>();
+		ArrayList<Stock> normalStock = new ArrayList<Stock>();
+		ArrayList<String> meta = new ArrayList<String>(), normalMeta = new ArrayList<String>();
 		for (int i = 0; i < stock.length; i++) {
 			stock[i] = new Stock(names.get(i));
 			stock[i].loadData();
 			meta.add(stock[i].getMeta() + ",");
+			if (stock[i].getMetaAsObject().isNormal()) {
+				normalStock.add(stock[i]);
+			}
 		}
-		Stock.exportStockData();
+		Stock.exportStockData("StockValues");
 		new ExportData() {
 			@Override
 			public void write() {
 				writeFile("metadata/SizeStockNames.txt", meta);
+			}
+		}.write();
+		Stock.textToFile.clear();
+		for (int a = 0; a < normalStock.size(); a++) {
+			normalStock.get(a).addGraphToExportData();
+			normalMeta.add(normalStock.get(a).getMeta() + ",");
+		}
+		Stock.exportStockData("NormalStockData");
+		new ExportData() {
+			@Override
+			public void write() {
+				writeFile("metadata/NormalSizeStockNames.txt", normalMeta);
 			}
 		}.write();
 	}

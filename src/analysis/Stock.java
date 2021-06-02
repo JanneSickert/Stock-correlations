@@ -19,13 +19,13 @@ public class Stock {
 	private String picURL = null;
 	private String name = null;
 	ArrayList<Block> graph = new ArrayList<Block>();
-	private static ArrayList<String> textToFile = new ArrayList<String>();
+	static ArrayList<String> textToFile = new ArrayList<String>();
 
-	public static void exportStockData() {
+	public static void exportStockData(String fileName) {
 		new ExportData() {
 			@Override
 			public void write() {
-				writeFile("metadata/StockValues.txt", textToFile);
+				writeFile("metadata/" + fileName + ".txt", textToFile);
 			}
 		}.write();
 	}
@@ -36,6 +36,20 @@ public class Stock {
 
 	class Candle {
 		int lastPriceInPixel, maxValueInPixel, minValueInPixel, firstPriceInPixel;
+	}
+	
+	public static class MetaObject{
+		int blocks;
+		int maxCandle;
+		int sumCandles;
+		public MetaObject(int blocks, int maxCandle, int sumCandles) {
+			this.blocks = blocks;
+			this.maxCandle = maxCandle;
+			this.sumCandles = sumCandles;
+		}
+		public boolean isNormal() {
+			return (blocks == 59 && maxCandle == 6 && sumCandles == 307);
+		}
 	}
 	
 	public String getMeta() {
@@ -50,7 +64,19 @@ public class Stock {
 		return ("{blocks:" + graph.size() + ",candles:" + max + ", SumCandles:" + sum + "}");
 	}
 	
-	private void addGraphToExportData() {
+	public Stock.MetaObject getMetaAsObject() {
+		int max = 0;
+		int sum = 0;
+		for (int i = 0; i < graph.size(); i++) {
+			sum = sum + graph.get(i).candle.size();
+			if (max < graph.get(i).candle.size()) {
+				max = graph.get(i).candle.size();
+			}
+		}
+		return (new Stock.MetaObject(graph.size(), max, sum));
+	}
+	
+	public void addGraphToExportData() {
 		textToFile.add("#" + name);
 		for (int block = 0; block < graph.size(); block++) {
 			textToFile.add("$Block index:" + block);
