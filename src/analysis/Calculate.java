@@ -150,20 +150,30 @@ public class Calculate {
 		Matrix<Integer> matrix = new Matrix<Integer>();
 		for (int x = 0; x < deduction.size(); x++) {
 			matrix.add(new ArrayList<ArrayList<Integer>>());
-			for (int y = 0; y < deduction.get(x).size(); x++) {
+			for (int y = 0; y < deduction.get(x).size(); y++) {
 				matrix.get(x).add(new ArrayList<Integer>());
 				for (int z = 0; z < diffrence.length; z++) {
 					if (z != nr) {
-						Integer dgg = deduction.get(x).get(y);
-						if (dgg > 0) {
-							Integer v = diffrence[z].dif.get(x).get(dgg - sub);
-							matrix.get(x, y).add(v);
+						Integer backIndex = deduction.get(x).get(y) - sub;
+						if (checkIndexExist(diffrence[z].dif.get(x), backIndex)) {
+							matrix.get(x, y).add(diffrence[z].dif.get(x).get(backIndex));
 						}
 					}
 				}
 			}
 		}
 		return matrix;
+	}
+	
+	private static boolean checkIndexExist(ArrayList<Integer> list, Integer index) {
+		boolean b = false;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) == index) {
+				b = true;
+				break;
+			}
+		}
+		return b;
 	}
 
 	private static int sshort(int nr) {
