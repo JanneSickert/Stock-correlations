@@ -14,6 +14,7 @@ public @interface Comment {
 	String make() default "";
 	String ret() default "";
 	String[] exampleInput() default {};
+	int[] i_exampleInput() default {};
 	String exampleOutput() default "";
 	int i_exampleOutput() default -1;
 	String contain() default "";
