@@ -217,6 +217,6 @@ public class Stock {
 			}
 		}
 		addGraphToExportData();
-		System.out.println("Calculated data for " + name);
+		// System.out.println("Calculated data for " + name);
 	}
 }

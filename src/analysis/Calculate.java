@@ -20,6 +20,7 @@ public class Calculate {
 	private final int MAX_PIXEL = 862;
 	private final int STOP = 9;
 	private final int EN = Integer.MAX_VALUE;
+	private final float PIXEL_PER_DAY = (float) 2.032258;
 
 	private int[][] cl = new int[NR_OF_STOCKS][MAX_PIXEL];
 	private int[][] bi = new int[NR_OF_STOCKS][MAX_PIXEL];
@@ -64,17 +65,25 @@ public class Calculate {
 		}
 	}
 	
-	
-	private int getNextValueBehind(int stock, int candle) {
+	private int getNextValueBehind(int stock, int candle, int interval) {
 		int ret;
-		int i = 1;
-		while (candle - i >= 0 && cl[stock][candle - i] == EN) {
-			if (i == STOP) {
-				break;
+		int i = interval;
+		final int LS = STOP / 3;
+		int c = 0;
+		boolean b = false;
+		if (candle - i < 0) {
+			b = true;
+		} else {
+			while (candle - i > 0 && cl[stock][candle - i] == EN) {
+				if (c == LS) {
+					b = true;
+					break;
+				}
+				i++;
+				c++;
 			}
-			i++;
 		}
-		if (i == STOP) {
+		if (b) {
 			ret = EN;
 		} else {
 			ret = cl[stock][candle - i];
@@ -107,7 +116,7 @@ public class Calculate {
 		return result;
 	}
 	
-	public int make(int stock, boolean buy) {
+	public int make(int stock, boolean buy, int intervalInDays) {
 		int[] arr = null;// This is a index array.
 		if (buy) {
 			arr = new Difference() {
@@ -131,7 +140,7 @@ public class Calculate {
 		}
 		for (int i = 0; i < NR_OF_STOCKS; i++) {
 			for (int k = 0; arr[k] != EN; k++) {
-				bi[i][k] = getNextValueBehind(i, arr[k]);
+				bi[i][k] = getNextValueBehind(i, arr[k], (int) Math.round(intervalInDays * PIXEL_PER_DAY));
 			}
 		}
 		int[] currentMarketSituation = getCurrentMarketSituation();

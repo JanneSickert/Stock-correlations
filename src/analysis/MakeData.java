@@ -13,6 +13,7 @@ public class MakeData {
 	static ArrayList<ArrayList<Stock.Candle>> stock_list = new ArrayList<ArrayList<Stock.Candle>>();
 	
 	public static void main(String[] args) {
+		System.out.println("start");
 		ArrayList<String> names = readFile("metadata/StockNames.txt");
 		stock = new Stock[names.size()];
 		ArrayList<Stock> normalStock = new ArrayList<Stock>();
@@ -91,19 +92,29 @@ public class MakeData {
 				Calculate ca = new Calculate(lfc);
 				Sort<String> sort = new Sort<String>();
 				int score;
-				for (int i = 0; i < stock.length; i++) {
-					score = ca.make(i, true);
-					sort.addItem(stock[i].name + " buy score:", score);
-				}
-				for (int i = 0; i < stock.length; i++) {
-					score = ca.make(i, false);
-					sort.addItem(stock[i].name + " short score:", score);
+				for (int intervalInDays = 1; intervalInDays < 31 * 2; intervalInDays++) {
+					for (int i = 0; i < stock.length; i++) {
+						score = ca.make(i, true, intervalInDays);
+						if (score != 0) {
+							sort.addItem(stock[i].name + " interval in days:" + intervalInDays + " buy score:", score);
+						}
+					}
+					for (int i = 0; i < stock.length; i++) {
+						score = ca.make(i, false, intervalInDays);
+						if (score != 0) {
+							sort.addItem(stock[i].name + " interval in days:" + intervalInDays + " short score:", score);
+						}
+					}
 				}
 				sort.sortElements();
 				ArrayList<Sort.Ele<String>> sortList = sort.getReverseList();
+				ArrayList<String> sits = new ArrayList<String>();
 				for (int i = 0; i < sortList.size(); i++) {
-					System.out.println((String) sortList.get(i).e + sortList.get(i).nr);
+					String osits = (String) sortList.get(i).e + sortList.get(i).nr;
+					System.out.println(osits);
+					sits.add(osits);
 				}
+				writeFile("metadata/IntervalValues.txt", sits);
 			}
 		}.write();
 	}
