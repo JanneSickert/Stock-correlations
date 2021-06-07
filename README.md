@@ -7,4 +7,4 @@ had the desired price direction.
 Because data science always takes a while, I have implemented different starting points.<br><br>
 - parser.Main.main(String[] args)	// Downloads all data.
 - parser.Test.main(String[] args)	// Tests with example values
-- analysis.MakeData.main(String[] args) // Converts the data from the graph into numbers.
+- analysis.MakeData.main(String[] args) // Converts the data from the graph into numbers. And assigns scores to the stocks at different intervals.
