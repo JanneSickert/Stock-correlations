@@ -89,14 +89,20 @@ public class MakeData {
 				}
 				writeFile("metadata/listForC.txt", listForC);
 				Calculate ca = new Calculate(lfc);
-				int[][] score = new int[2][stock.length];//index 0 is for buy.
+				Sort<String> sort = new Sort<String>();
+				int score;
 				for (int i = 0; i < stock.length; i++) {
-					score[0][i] = ca.make(i, true);
-					System.out.println(stock[i].name + " buy score: " + score[0][i]);
+					score = ca.make(i, true);
+					sort.addItem(stock[i].name + " buy score:", score);
 				}
 				for (int i = 0; i < stock.length; i++) {
-					score[1][i] = ca.make(i, false);
-					System.out.println(stock[i].name + " short score: " + score[1][i]);
+					score = ca.make(i, false);
+					sort.addItem(stock[i].name + " short score:", score);
+				}
+				sort.sortElements();
+				ArrayList<Sort.Ele<String>> sortList = sort.getReverseList();
+				for (int i = 0; i < sortList.size(); i++) {
+					System.out.println((String) sortList.get(i).e + sortList.get(i).nr);
 				}
 			}
 		}.write();
