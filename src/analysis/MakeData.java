@@ -10,6 +10,7 @@ import parser.ExportData;
 public class MakeData {
 
 	static Stock[] stock;
+	static ArrayList<ArrayList<Stock.Candle>> stock_list = new ArrayList<ArrayList<Stock.Candle>>();
 	
 	public static void main(String[] args) {
 		ArrayList<String> names = readFile("metadata/StockNames.txt");
@@ -59,7 +60,53 @@ public class MakeData {
 				writeFile("metadata/Space.txt", strEmtyLines);
 			}
 		}.write();
-		Calculate.calculate();
+		for (int a = 0; a < stock.length; a++) {
+			stock_list.add(new ArrayList<Stock.Candle>());
+			for (int b = 0; b < stock[a].graph.size(); b++) {
+				for (int c = 0; c < stock[a].graph.get(b).candle.size(); c++) {
+					if (!(stock[a].graph.get(b).candle.get(c).lastPriceInPixel == -1)) {
+						stock_list.get(a).add(stock[a].graph.get(b).candle.get(c));
+					}
+				}
+			}
+		}
+		new ExportData() {
+			@Override
+			public void write() {
+				ArrayList<ForCal> lfc = new ArrayList<ForCal>();
+				ArrayList<String> listForC = new ArrayList<String>();
+				for (int a = 0; a < stock_list.size(); a++) {
+					for (int b = 0; b < stock_list.get(a).size(); b++) {
+						Stock.Candle c = stock_list.get(a).get(b);
+						listForC.add("" + a + ":" + c.indexInPixel + ":" + c.firstPriceInPixel + ":" + c.lastPriceInPixel);
+						ForCal fc = new ForCal();
+						fc.stock = a;
+						fc.index = c.indexInPixel;
+						fc.first = c.firstPriceInPixel;
+						fc.last = c.lastPriceInPixel;
+						lfc.add(fc);
+					}
+				}
+				writeFile("metadata/listForC.txt", listForC);
+				Calculate ca = new Calculate(lfc);
+				int[][] score = new int[2][stock.length];//index 0 is for buy.
+				for (int i = 0; i < stock.length; i++) {
+					score[0][i] = ca.make(i, true);
+					System.out.println(stock[i].name + " buy score: " + score[0][i]);
+				}
+				for (int i = 0; i < stock.length; i++) {
+					score[1][i] = ca.make(i, false);
+					System.out.println(stock[i].name + " short score: " + score[1][i]);
+				}
+			}
+		}.write();
+	}
+	
+	public static class ForCal{
+		int stock;
+		int index;
+		int first;
+		int last;
 	}
 
 	private static ArrayList<String> readFile(String FileUrl) {

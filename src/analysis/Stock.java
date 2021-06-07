@@ -35,8 +35,8 @@ public class Stock {
 		ArrayList<Candle> candle = new ArrayList<Candle>();
 	}
 
-	class Candle {
-		int lastPriceInPixel, maxValueInPixel, minValueInPixel, firstPriceInPixel;
+	public static class Candle {
+		int lastPriceInPixel, maxValueInPixel, minValueInPixel, firstPriceInPixel, indexInPixel;
 	}
 	
 	public static class MetaObject{
@@ -199,6 +199,7 @@ public class Stock {
 			case 2:
 				graph.get(blockIndex).candle.get(candleIndex).lastPriceInPixel = lastPixel;
 				graph.get(blockIndex).candle.get(candleIndex).firstPriceInPixel = firstPixel;
+				graph.get(blockIndex).candle.get(candleIndex).indexInPixel = x;
 				modi = 3;
 				break;
 			case 3:

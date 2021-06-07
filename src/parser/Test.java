@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import analysis.Stock;
-import analysis.Calculate;
 
 public class Test {
 
 	public static void main(String[] args) {
 		new Test_Pictures();
 		new Test_Stock();
-		Test_Calculate.test();
 	}
 
 	public static class Test_Pictures extends Pictures {
@@ -60,27 +58,6 @@ public class Test {
 							System.out.println("ERROR: Cannot download image");
 						}
 						stock.loadData();
-					}
-				}
-			}
-		}
-	}
-	
-	public static void p(String str) {
-		System.out.println(str);
-	}
-
-	public static class Test_Calculate extends Calculate {
-		public static void test() {
-			Method[] methoden = Calculate.class.getDeclaredMethods();
-			for (Method m : methoden) {
-				Comment c = m.getAnnotation(Comment.class);
-				if (c != null) {
-					if (c.includeTest()) {
-						switch (c.testId()) {
-						case 0:
-							
-						}
 					}
 				}
 			}
